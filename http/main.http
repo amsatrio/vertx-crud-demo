@@ -1,0 +1,4 @@
+@base_url=http://localhost:8888
+
+### hello world
+curl -X GET --location {{base_url}}
