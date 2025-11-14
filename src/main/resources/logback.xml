@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration>
+
+<configuration>
+    <import class="ch.qos.logback.classic.encoder.PatternLayoutEncoder" />
+    <import class="ch.qos.logback.core.rolling.RollingFileAppender" />
+    <import class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy" />
+    <import class="ch.qos.logback.classic.filter.LevelFilter" />
+    <import class="ch.qos.logback.core.ConsoleAppender" />
+    <import class="net.logstash.logback.appender.LogstashAccessTcpSocketAppender" />
+    <import class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder" />
+    <import class="com.github.danielwegener.logback.kafka.KafkaAppender" />
+    <import class="com.github.danielwegener.logback.kafka.encoding.LayoutKafkaMessageEncoder" />
+    <import class="ch.qos.logback.classic.AsyncAppender" />
+    <import class="ch.qos.logback.core.encoder.LayoutWrappingEncoder" />
+    <import class="ch.qos.logback.contrib.json.classic.JsonLayout" />
+    <import class="ch.qos.logback.contrib.jackson.JacksonJsonFormatter" />
+
+    <property name="logPattern" value="%d | %-5level | %logger{35} | %msg%n" />
+    <property name="logEncoding" value="UTF-8" />
+    <property name="logDirectory" value="logs" />
+    <property name="logServiceName" value="vertx-crud-demo" />
+
+    <appender name="STDOUT" class="ConsoleAppender">
+        <encoder class="PatternLayoutEncoder">
+            <charset>${logEncoding}</charset>
+            <pattern>${logPattern}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="STDOUT_JSON" class="ConsoleAppender">
+        <encoder class="LayoutWrappingEncoder">
+            <layout class="JsonLayout">
+                <timestampFormat>yyyy-MM-dd'T'HH:mm:ss.SSSX</timestampFormat>
+                <timestampFormatTimezoneId>Etc/UTC</timestampFormatTimezoneId>
+
+                <jsonFormatter class="JacksonJsonFormatter">
+                    <prettyPrint>false</prettyPrint>
+                </jsonFormatter>
+            </layout>
+        </encoder>
+    </appender>
+
+    <appender name="ROLLING" class="RollingFileAppender">
+        <file>${logDirectory}/${logServiceName}_current.log</file>
+        <rollingPolicy class="SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${logDirectory}\${logServiceName}_%d{yyyyMMdd}.%i.log</fileNamePattern>
+            <maxFileSize>20MB</maxFileSize>
+            <maxHistory>7</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder class="PatternLayoutEncoder">
+            <charset>${logEncoding}</charset>
+            <pattern>${logPattern}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="LOGSTASH" class="LogstashAccessTcpSocketAppender">
+        <destination>localhost:5000</destination>
+        <encoder class="LoggingEventCompositeJsonEncoder">
+            <providers>
+                <mdc />
+                <context />
+                <logLevel />
+                <pattern>
+                    <pattern>
+                        {
+                        "app": "${logServiceName}"
+                        }
+                    </pattern>
+                </pattern>
+                <threadName />
+                <message />
+                <logstashMarkers />
+                <stackTrace />
+            </providers>
+        </encoder>
+    </appender>
+    <appender name="KAFKA" class="KafkaAppender">
+        <encoder class="LoggingEventCompositeJsonEncoder">
+            <providers>
+                <mdc />
+                <context />
+                <logLevel />
+                <pattern>
+                    <pattern>
+                        {
+                        "app": "${logServiceName}"
+                        }
+                    </pattern>
+                </pattern>
+                <threadName />
+                <message />
+                <logstashMarkers />
+                <stackTrace />
+            </providers>
+        </encoder>
+        <topic>demo-project-log</topic>
+        <producerConfig>bootstrap.servers=localhost:9092</producerConfig>
+        <producerConfig>retries=2</producerConfig>
+    </appender>
+
+    <appender name="ASYNC_STDOUT" class="AsyncAppender">
+        <appender-ref ref="STDOUT" />
+        <queueSize>500</queueSize>
+        <maxFlushTime>1000</maxFlushTime>
+    </appender>
+
+    <appender name="ASYNC_ROLLING" class="AsyncAppender">
+        <appender-ref ref="ROLLING" />
+        <queueSize>500</queueSize>
+        <maxFlushTime>1000</maxFlushTime>
+    </appender>
+
+    <!--    CONFIG FILTER IN APPLICATION.YAML-->
+    <!--    <filter class="LevelFilter">-->
+    <!--        <level>DEBUG</level>-->
+    <!--        <onMatch>ACCEPT</onMatch>-->
+    <!--        <onMismatch>DENY</onMismatch>-->
+    <!--    </filter>-->
+
+    <logger name="org.apache.kafka" level="info" />
+    <root>
+        <!-- <appender-ref ref="KAFKA" /> -->
+        <!-- <appender-ref ref="ROLLING" /> -->
+        <!-- <appender-ref ref="STDOUT" /> -->
+        <!-- <appender-ref ref="LOGSTASH" /> -->
+        <appender-ref ref="ASYNC_STDOUT" />
+        <!-- <appender-ref ref="ASYNC_ROLLING" /> -->
+    </root>
+</configuration>

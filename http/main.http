@@ -1,4 +1,9 @@
-@base_url=http://localhost:8888
+@base_url=http://localhost:8811
+@hello_world_base_url={{base_url}}/v1/hello-world
+@health_base_url={{base_url}}/v1/health
 
-### hello world
-curl -X GET --location {{base_url}}
+### hello-world/hello
+curl -X GET --location {{hello_world_base_url}}/hello
+
+### health/status
+curl -X GET --location {{health_base_url}}/status
