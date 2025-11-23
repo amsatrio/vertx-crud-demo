@@ -1,9 +1,54 @@
 @base_url=http://localhost:8811
 @hello_world_base_url={{base_url}}/v1/hello-world
 @health_base_url={{base_url}}/v1/health
+@mbiodata_base_url={{base_url}}/v1/m-biodata
 
+# === hello-world
 ### hello-world/hello
 curl -X GET --location {{hello_world_base_url}}/hello
 
+# === health
 ### health/status
 curl -X GET --location {{health_base_url}}/status
+
+# === m-biodata
+### page
+curl -X GET --location {{mbiodata_base_url}}?page=500&size=2
+### get
+curl -X GET --location {{mbiodata_base_url}}/1
+### create
+POST {{mbiodata_base_url}}
+
+{
+    "id": 1754726492,
+    "fullname": "okey dokey 1212",
+    "mobilePhone": "0872635473",
+    "image": null,
+    "imagePath": null,
+    "createdBy": 1,
+    "createdOn": "2025-08-09 08:01:31",
+    "modifiedBy": null,
+    "modifiedOn": "2025-08-09 08:50:52",
+    "deletedBy": null,
+    "deletedOn": null,
+    "isDelete": false 
+}
+### update
+PUT {{mbiodata_base_url}}
+
+{
+    "id": 1754726491,
+    "fullname": "okey dokey 1",
+    "mobilePhone": "0872635473",
+    "image": null,
+    "imagePath": null,
+    "createdBy": 1,
+    "createdOn": "2025-08-09 08:01:31",
+    "modifiedBy": null,
+    "modifiedOn": "2025-08-09 08:50:52",
+    "deletedBy": null,
+    "deletedOn": null,
+    "isDelete": false 
+}
+### delete
+curl -X DELETE --location {{mbiodata_base_url}}/1754726492

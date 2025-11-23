@@ -11,14 +11,20 @@ import jakarta.inject.Singleton;
 
 @Singleton
 public class ApplicationConfig {
-    private JsonObject jsonObject = new JsonObject();
+    private JsonObject jsonObject = null;
 
     public JsonObject getJsonObject() {
         return jsonObject == null ? null : jsonObject.copy();
     }
+    public void setJsonObject(JsonObject jsonObject) {
+        this.jsonObject = jsonObject;
+    }
 
     public Future<JsonObject> init() {
         Promise<JsonObject> promise = Promise.promise();
+        if(jsonObject == null) {
+            jsonObject = new JsonObject();
+        }
         getApplicationConfig(promise, jsonObject);
         return promise.future();
     }
@@ -26,6 +32,7 @@ public class ApplicationConfig {
     private Future<JsonObject> getApplicationConfig(Promise<JsonObject> promise, JsonObject jsonObject) {
         String fileFormat = "yaml"; // yaml, properties
         String filePath = "application." + fileFormat;
+
         if (!jsonObject.isEmpty()) {
             String environment = jsonObject.getJsonObject("application").getString("environment", "local");
             filePath = "application-" + environment + "." + fileFormat;

@@ -1,11 +1,16 @@
 package io.github.amsatrio.vertx_crud_demo.modules.health;
 
 import io.github.amsatrio.vertx_crud_demo.dto.response.Response;
+import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import jakarta.inject.Singleton;
 
 @Singleton
 public class HealthApi {
+    public void init(Router router){
+        router.get("/v1/health/status").handler(this::status);
+    }
+    
     public void status(RoutingContext routingContext) {
         Response<String> response = Response.success(200, routingContext.normalizedPath(), "ok");
 
