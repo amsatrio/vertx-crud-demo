@@ -5,6 +5,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.vertx.codegen.format.SnakeCase;
 import io.vertx.codegen.json.annotations.JsonGen;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.web.validation.RequestPredicate;
+import io.vertx.ext.web.validation.ValidationHandler;
+import io.vertx.ext.web.validation.builder.Bodies;
+import io.vertx.ext.web.validation.builder.Parameters;
+import io.vertx.ext.web.validation.builder.ValidationHandlerBuilder;
+import io.vertx.json.schema.Draft;
+import io.vertx.json.schema.JsonSchemaOptions;
+import io.vertx.json.schema.SchemaRepository;
+import io.vertx.json.schema.common.dsl.Keywords;
+import io.vertx.json.schema.common.dsl.ObjectSchemaBuilder;
+import io.vertx.json.schema.common.dsl.Schemas;
 import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.templates.RowMapper;
 import io.vertx.sqlclient.templates.annotations.Column;
@@ -90,7 +101,8 @@ public class MBiodata implements Serializable {
             mBiodata.setId(row.getLong("id"));
             mBiodata.setFullname(row.getString("fullname"));
             mBiodata.setMobilePhone(row.getString("mobile_phone"));
-            mBiodata.setImage(row.getBuffer("image") == null ? null : Base64.getEncoder().encodeToString(row.getBuffer("image").getBytes()));
+            mBiodata.setImage(row.getBuffer("image") == null ? null
+                    : Base64.getEncoder().encodeToString(row.getBuffer("image").getBytes()));
             mBiodata.setImagePath(row.getString("image_path"));
             mBiodata.setCreatedBy(row.getLong("created_by"));
             mBiodata.setCreatedOn(row.getLocalDateTime("created_on"));
@@ -107,7 +119,6 @@ public class MBiodata implements Serializable {
     public JsonObject toJsonObject() {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-        
         JsonObject jsonObject = new JsonObject();
         jsonObject.put("id", id);
         jsonObject.put("fullname", fullname);
@@ -124,4 +135,34 @@ public class MBiodata implements Serializable {
 
         return jsonObject;
     }
+
+    public static ValidationHandler validationBodyHandler() {
+        SchemaRepository schemaRepository = SchemaRepository
+            .create(new JsonSchemaOptions().setBaseUri("https://vertx.io").setDraft(Draft.DRAFT7));
+        ObjectSchemaBuilder objectSchemaBuilder = Schemas.objectSchema()
+                .property("id", Schemas.numberSchema())
+                .property("fullname", Schemas.stringSchema().nullable().with(Keywords.maxLength(255)))
+                .property("mobilePhone", Schemas.stringSchema().nullable().with(Keywords.maxLength(15)))
+                .property("image", Schemas.stringSchema().nullable())
+                .property("imagePath", Schemas.stringSchema().nullable().with(Keywords.maxLength(255)))
+                .property("isDelete", Schemas.booleanSchema().nullable());
+
+        return ValidationHandlerBuilder
+                .create(schemaRepository)
+                .body(Bodies.json(objectSchemaBuilder))
+                .body(Bodies.formUrlEncoded(objectSchemaBuilder))
+                .predicate(RequestPredicate.BODY_REQUIRED)
+                .build();
+    }
+    public static ValidationHandler validationPathParamIdHandler() {
+        SchemaRepository schemaRepository = SchemaRepository
+            .create(new JsonSchemaOptions().setBaseUri("https://vertx.io").setDraft(Draft.DRAFT7));
+        return ValidationHandlerBuilder
+                .create(schemaRepository)
+                .pathParameter(Parameters.param(
+                        "id",
+                        Schemas.numberSchema().with(Keywords.minimum(1))))
+                .build();
+    }
+
 }

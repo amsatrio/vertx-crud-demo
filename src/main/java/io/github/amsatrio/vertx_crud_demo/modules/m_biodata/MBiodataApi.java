@@ -36,19 +36,28 @@ public class MBiodataApi {
         router.get("/v1/m-biodata/:key/:value")
                 .handler(this::findBy);
         router.get("/v1/m-biodata/:id")
+                .handler(MBiodata.validationPathParamIdHandler())
                 .handler(this::findById);
         router.post("/v1/m-biodata")
+                .handler(MBiodata.validationBodyHandler())
                 .handler(this::create);
         router.put("/v1/m-biodata")
+                .handler(MBiodata.validationBodyHandler())
                 .handler(this::update);
         router.delete("/v1/m-biodata/:id")
+                .handler(MBiodata.validationPathParamIdHandler())
                 .handler(this::deleteById);
     }
 
     public void findById(RoutingContext routingContext) {
         log.debug("findById");
+        String idString = routingContext.pathParam("id");
+        if (idString == null) {
+            routingContext.response().setStatusCode(400).end("Missing ID parameter");
+            return;
+        }
 
-        long id = Long.parseLong(routingContext.pathParam("id"));
+        Long id = Long.parseLong(idString);
 
         mBiodataService.findById(id)
                 .onFailure(exception -> {

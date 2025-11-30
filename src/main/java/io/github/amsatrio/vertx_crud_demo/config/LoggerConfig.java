@@ -31,6 +31,9 @@ public class LoggerConfig {
             case 5:
                 loggerLevel = "TRACE";
                 break;
+            default:
+                loggerLevel = "INFO";
+                break;
         }
 
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();

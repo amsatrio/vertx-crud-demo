@@ -1,4 +1,4 @@
 start:
-	mvn exec:java
+	JAVA_HOME=/opt/openjdk-bin-17 mvn exec:java -X
 build:
-	mvn package
+	JAVA_HOME=/opt/openjdk-bin-17 mvn package -X
