@@ -6,6 +6,7 @@ import io.github.amsatrio.vertx_crud_demo.config.ApplicationConfig;
 import io.github.amsatrio.vertx_crud_demo.config.CorsConfig;
 import io.github.amsatrio.vertx_crud_demo.config.LoggerConfig;
 import io.github.amsatrio.vertx_crud_demo.handler.exception.ApiExceptionHandler;
+import io.github.amsatrio.vertx_crud_demo.handler.middleware.LoggerMiddleware;
 import io.github.amsatrio.vertx_crud_demo.modules.health.HealthApi;
 import io.github.amsatrio.vertx_crud_demo.modules.hello_world.HelloWorldApi;
 import io.github.amsatrio.vertx_crud_demo.modules.m_biodata.MBiodataApi;
@@ -88,12 +89,16 @@ public class MainVerticle extends VerticleBase {
         .setUploadsDirectory("tmp/file-uploads")
         .setBodyLimit(100 * 1024 * 1024); // set 100MB limit
 
+    // INIT MIDDLEWARE HANDLER
+    LoggerMiddleware loggerMiddleware = beanContext.getBean(LoggerMiddleware.class);
+
     // CORS
     CorsConfig corsConfig = this.beanContext.getBean(CorsConfig.class);
 
     router.route()
         .handler(corsConfig.getCorsHandler())
-        .handler(bodyHandler);
+        .handler(bodyHandler)
+        .handler(loggerMiddleware);
 
     HealthApi healthApi = beanContext.getBean(HealthApi.class);
     healthApi.init(router);
