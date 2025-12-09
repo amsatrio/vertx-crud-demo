@@ -7,6 +7,7 @@ import io.github.amsatrio.vertx_crud_demo.dto.exception.DataNotFoundException;
 import io.github.amsatrio.vertx_crud_demo.dto.request.FilterRequest;
 import io.github.amsatrio.vertx_crud_demo.dto.request.SortRequest;
 import io.github.amsatrio.vertx_crud_demo.repository.PaginationRepository;
+import io.github.amsatrio.vertx_crud_demo.util.AppFileIO;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.buffer.Buffer;
@@ -28,10 +29,12 @@ public class MBiodataRepository {
 
     private final SqlClient sqlClient;
     private final PaginationRepository<MBiodata> paginationRepository;
+    private DatabaseType databaseType = DatabaseType.SQLSERVER;
+    private String moduleName = "m-biodata";
 
     @Inject
     public MBiodataRepository(DatabaseClientSelector databaseConfig) {
-        this.sqlClient = databaseConfig.getSqlClient(DatabaseType.MARIADB);
+        this.sqlClient = databaseConfig.getSqlClient(databaseType);
         this.paginationRepository = new PaginationRepository<>(sqlClient);
     }
 
@@ -43,17 +46,20 @@ public class MBiodataRepository {
 
         Promise<JsonObject> promise = Promise.promise();
 
-        SqlTemplate
-                .forQuery(sqlClient, "select * from m_biodata where id=#{id}")
-                .mapTo(MBiodata.INSTANCE)
-                .execute(Collections.singletonMap("id", id))
-                .onFailure(promise::fail)
-                .onSuccess(rows -> {
-                    if (rows.size() == 0) {
-                        promise.fail(new DataNotFoundException("data not found"));
-                    } else {
-                        promise.complete(rows.iterator().next().toJsonObject());
-                    }
+        AppFileIO.readFile("sql/" + databaseType.toString().toLowerCase() + "/" + moduleName + "/find-all-by-id.sql")
+                .onFailure(promise::fail).onSuccess(sql -> {
+                    SqlTemplate
+                            .forQuery(sqlClient, sql)
+                            .mapTo(MBiodata.INSTANCE)
+                            .execute(Collections.singletonMap("id", id))
+                            .onFailure(promise::fail)
+                            .onSuccess(rows -> {
+                                if (rows.size() == 0) {
+                                    promise.fail(new DataNotFoundException("data not found"));
+                                } else {
+                                    promise.complete(rows.iterator().next().toJsonObject());
+                                }
+                            });
                 });
         return promise.future();
 
@@ -62,28 +68,27 @@ public class MBiodataRepository {
     public Future<JsonObject> findBy(String key, String value) {
         log.debug("findBy key: " + key + ", value: " + value);
 
-        value = "%" + value + "%";
-
         Promise<JsonObject> promise = Promise.promise();
 
-        String template = "select * from m_biodata where " + key + " like #{value} limit 1";
-        log.info("template: " + template);
+        AppFileIO.readFile("sql/" + databaseType.toString().toLowerCase() + "/" + moduleName + "/find-all-by.sql")
+                .onFailure(promise::fail).onSuccess(sql -> {
+                    sql = sql.replace("$KEY", key);
 
-        SqlTemplate
-                .forQuery(sqlClient, template)
-                .mapTo(MBiodata.INSTANCE)
-                .execute(Collections.singletonMap("value", value))
-                .onFailure(exception -> {
-                    promise.fail(exception);
-                })
-                .onSuccess(rows -> {
-                    if (rows.size() == 0) {
-                        promise.fail(new DataNotFoundException("data not found"));
-                    } else {
-                        promise.complete(rows.iterator().next().toJsonObject());
-                    }
+                    SqlTemplate
+                            .forQuery(sqlClient, sql)
+                            .mapTo(MBiodata.INSTANCE)
+                            .execute(Collections.singletonMap("value", "%" + value + "%"))
+                            .onFailure(exception -> {
+                                promise.fail(exception);
+                            })
+                            .onSuccess(rows -> {
+                                if (rows.size() == 0) {
+                                    promise.fail(new DataNotFoundException("data not found"));
+                                } else {
+                                    promise.complete(rows.iterator().next().toJsonObject());
+                                }
+                            });
                 });
-
         return promise.future();
 
     }
@@ -115,17 +120,17 @@ public class MBiodataRepository {
                         }
                     }
 
-                    // insert new data
-                    SqlTemplate
-                            .forUpdate(sqlClient,
-                                    """
-                                            insert into \s
-                                            m_biodata (id,fullname,mobile_phone,image,image_path,created_by,created_on,modified_by,modified_on,deleted_by,deleted_on,is_delete) \s
-                                            values (#{id},#{fullname},#{mobilePhone},#{image},#{imagePath},#{createdBy},#{createdOn},#{modifiedBy},#{modifiedOn},#{deletedBy},#{deletedOn},#{isDelete})""")
-                            .execute(map)
-                            .onFailure(promise::fail)
-                            .onSuccess(v -> {
-                                promise.complete();
+                    AppFileIO
+                            .readFile("sql/" + databaseType.toString().toLowerCase() + "/" + moduleName + "/insert.sql")
+                            .onFailure(promise::fail).onSuccess(sql -> {
+                                // insert new data
+                                SqlTemplate
+                                        .forUpdate(sqlClient, sql)
+                                        .execute(map)
+                                        .onFailure(promise::fail)
+                                        .onSuccess(v -> {
+                                            promise.complete();
+                                        });
                             });
 
                 });
@@ -160,17 +165,17 @@ public class MBiodataRepository {
                         }
                     }
 
-                    // update data
-                    SqlTemplate
-                            .forUpdate(sqlClient,
-                                    """
-                                            update m_biodata \s
-                                            set id=#{id},fullname=#{fullname},mobile_phone=#{mobilePhone},image=#{image},image_path=#{imagePath},modified_by=#{modifiedBy},modified_on=#{modifiedOn},deleted_by=#{deletedBy},deleted_on=#{deletedOn},is_delete=#{isDelete} \s
-                                            where id=#{id}""")
-                            .execute(map)
-                            .onFailure(promise::fail)
-                            .onSuccess(v -> {
-                                promise.complete();
+                    AppFileIO
+                            .readFile("sql/" + databaseType.toString().toLowerCase() + "/" + moduleName + "/update.sql")
+                            .onFailure(promise::fail).onSuccess(sql -> {
+                                // update data
+                                SqlTemplate
+                                        .forUpdate(sqlClient, sql)
+                                        .execute(map)
+                                        .onFailure(promise::fail)
+                                        .onSuccess(v -> {
+                                            promise.complete();
+                                        });
                             });
 
                 });
@@ -183,14 +188,18 @@ public class MBiodataRepository {
 
         Promise<Void> promise = Promise.promise();
 
-        SqlTemplate
-                .forQuery(sqlClient, "delete from m_biodata where id=#{id}")
-                .execute(Collections.singletonMap("id", id))
-                .onFailure(exception -> {
-                    promise.fail(exception);
-                })
-                .onSuccess(rows -> {
-                    promise.complete();
+        AppFileIO
+                .readFile("sql/" + databaseType.toString().toLowerCase() + "/" + moduleName + "/delete.sql")
+                .onFailure(promise::fail).onSuccess(sql -> {
+                    SqlTemplate
+                            .forQuery(sqlClient, sql)
+                            .execute(Collections.singletonMap("id", id))
+                            .onFailure(exception -> {
+                                promise.fail(exception);
+                            })
+                            .onSuccess(rows -> {
+                                promise.complete();
+                            });
                 });
 
         return promise.future();
@@ -207,7 +216,6 @@ public class MBiodataRepository {
         return paginationRepository.getPage(MBiodata.class, "m_biodata", page, size, filterRequests, sortRequests,
                 globalFilter);
     }
-
 
     private Future<Boolean> mBiodataExist(Long id) {
         Promise<Boolean> promise = Promise.promise();

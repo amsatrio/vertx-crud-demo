@@ -1,4 +1,4 @@
-@base_url=http://localhost:8811
+@base_url=http://localhost:8080
 @hello_world_base_url={{base_url}}/v1/hello-world
 @health_base_url={{base_url}}/v1/health
 @mbiodata_base_url={{base_url}}/v1/m-biodata
@@ -48,7 +48,7 @@ Content-Type: application/json
     "mobilePhone": "0872635473",
     "image": null,
     "imagePath": null,
-    "isDelete": true 
+    "isDelete": false 
 }
 
 ### delete

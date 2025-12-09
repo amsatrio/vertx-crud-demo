@@ -1,0 +1,1 @@
+select * from m_biodata where $KEY=#{value} limit 1

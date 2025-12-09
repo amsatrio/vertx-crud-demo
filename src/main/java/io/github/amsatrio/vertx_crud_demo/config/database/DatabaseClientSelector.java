@@ -22,6 +22,8 @@ public class DatabaseClientSelector {
                                 return DatabaseType.MARIADB;
                             } else if (provider instanceof PostgreSQLDatabaseConfig) {
                                 return DatabaseType.POSTGRESQL;
+                            } else if (provider instanceof SQLServerDatabaseConfig) {
+                                return DatabaseType.SQLSERVER;
                             }
                             throw new IllegalArgumentException("Unknown database provider: " + provider.getClass());
                         },

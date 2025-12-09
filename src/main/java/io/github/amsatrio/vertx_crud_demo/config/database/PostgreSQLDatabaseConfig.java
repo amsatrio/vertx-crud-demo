@@ -33,7 +33,7 @@ public class PostgreSQLDatabaseConfig implements DatabaseClientProvider {
         PgConnectOptions connectOptions = new PgConnectOptions()
                 .setPort(optionJsonObject.getInteger("port"))
                 .setHost(optionJsonObject.getString("host"))
-                .setDatabase(optionJsonObject.getString("db_name"))
+                .setDatabase(optionJsonObject.getString("db-name"))
                 .setUser(optionJsonObject.getString("username"))
                 .setPassword(optionJsonObject.getString("password"));
 

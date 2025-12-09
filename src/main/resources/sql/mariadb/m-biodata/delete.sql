@@ -1,0 +1,1 @@
+delete from m_biodata where id=#{id}

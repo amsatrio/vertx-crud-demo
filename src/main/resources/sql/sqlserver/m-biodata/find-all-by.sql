@@ -1,0 +1,1 @@
+select top 1 * from m_biodata where $KEY=#{value}

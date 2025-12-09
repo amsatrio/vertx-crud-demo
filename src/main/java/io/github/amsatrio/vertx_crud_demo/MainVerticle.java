@@ -64,13 +64,15 @@ public class MainVerticle extends VerticleBase {
   private Future<HttpServer> startHttpServer(JsonObject jsonObject) {
     JsonObject serverJsonObject = jsonObject.getJsonObject("server");
     JsonObject tlsJsonObject = serverJsonObject.getJsonObject("tls");
+    JsonObject compressionJsonObject = serverJsonObject.getJsonObject("compression");
 
     HttpServerOptions options = new HttpServerOptions()
         .setSsl(tlsJsonObject.getBoolean("enabled"))
         .setKeyCertOptions(new PemKeyCertOptions()
             .setKeyPath(tlsJsonObject.getString("key_file"))
             .setCertPath(tlsJsonObject.getString("cert_file")))
-        .setCompressionSupported(serverJsonObject.getBoolean("compression"));
+        .setCompressionSupported(compressionJsonObject.getBoolean("enabled"))
+        .setCompressionContentSizeThreshold(compressionJsonObject.getInteger("min-response-size"));
 
     return vertx.createHttpServer(options)
         .requestHandler(router())
