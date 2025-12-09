@@ -6,11 +6,13 @@ server:
   host: 127.0.0.1
   port: 8888
   thread: 4
-  compression: true
+  compression: 
+    enabled: true
+    min-response-size: 1024
   tls: 
     enabled: false
-    cert_file: cert/server.pem
-    key_file: cert/server.key
+    cert-file: cert/server.pem
+    key-file: cert/server.key
 
 database:
   mariadb:
@@ -18,7 +20,7 @@ database:
     password: auUmc2FutKX5frJad3uVpNM5mnbXhzS53AygPwijprD9qfabKYebggJpJKcWCN9NmQpUf7QM7wFcyg7AWMLhFTdHXy34fX7zvrMjbe9usMnPpAWS9KF779XTEAEQE22s
     host: localhost
     port: 3306
-    db_name: db_hospital
+    db-name: db_hospital
     pool:
       max: 100
       min: 5
@@ -27,16 +29,16 @@ database:
     password: auUmc2FutKX5frJad3uVpNM5mnbXhzS53AygPwijprD9qfabKYebggJpJKcWCN9NmQpUf7QM7wFcyg7AWMLhFTdHXy34fX7zvrMjbe9usMnPpAWS9KF779XTEAEQE22s
     host: localhost
     port: 5432
-    db_name: db_hospital
+    db-name: db_hospital
     pool:
       max: 100
       min: 5
   sqlserver:
-    username: user_local
+    username: sa
     password: auUmc2FutKX5frJad3uVpNM5mnbXhzS53AygPwijprD9qfabKYebggJpJKcWCN9NmQpUf7QM7wFcyg7AWMLhFTdHXy34fX7zvrMjbe9usMnPpAWS9KF779XTEAEQE22s
     host: localhost
     port: 1433
-    db_name: db_hospital
+    db-name: db_hospital
     pool:
       max: 100
       min: 5

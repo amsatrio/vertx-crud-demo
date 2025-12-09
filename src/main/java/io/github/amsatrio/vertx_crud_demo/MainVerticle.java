@@ -69,8 +69,8 @@ public class MainVerticle extends VerticleBase {
     HttpServerOptions options = new HttpServerOptions()
         .setSsl(tlsJsonObject.getBoolean("enabled"))
         .setKeyCertOptions(new PemKeyCertOptions()
-            .setKeyPath(tlsJsonObject.getString("key_file"))
-            .setCertPath(tlsJsonObject.getString("cert_file")))
+            .setKeyPath(tlsJsonObject.getString("key-file"))
+            .setCertPath(tlsJsonObject.getString("cert-file")))
         .setCompressionSupported(compressionJsonObject.getBoolean("enabled"))
         .setCompressionContentSizeThreshold(compressionJsonObject.getInteger("min-response-size"));
 

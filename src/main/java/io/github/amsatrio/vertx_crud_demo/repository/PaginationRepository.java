@@ -204,7 +204,12 @@ public class PaginationRepository<T> {
 
             switch (filterRequest.getMatchMode()) {
                 case BETWEEN:
-                    String value2 = object2.toString();
+                    String value2 = null;
+                    if(object2 == null) {
+                        value2 = "";
+                    } else {
+                        value2 = object2.toString();
+                    }
                     queryFiltering += id + " BETWEEN " + value + " AND " + value2;
                     break;
                 case EQUALS:

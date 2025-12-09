@@ -1,4 +1,4 @@
-@base_url=http://localhost:8080
+@base_url=http://localhost:8811
 @hello_world_base_url={{base_url}}/v1/hello-world
 @health_base_url={{base_url}}/v1/health
 @mbiodata_base_url={{base_url}}/v1/m-biodata
