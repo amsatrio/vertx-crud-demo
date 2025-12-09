@@ -185,5 +185,5 @@ nbdist/
 !.vscode/extensions.json
 
 .vscode
-**/application**.yaml
+# **/application**.yaml
 logs
