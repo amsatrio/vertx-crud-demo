@@ -1,0 +1,91 @@
+application:
+  name: vertx-hospital
+  environment: local
+
+server:
+  host: 127.0.0.1
+  port: 8888
+  thread: 4
+  compression: true
+  tls: 
+    enabled: false
+    cert_file: cert/server.pem
+    key_file: cert/server.key
+
+database:
+  mariadb:
+    username: user_local
+    password: auUmc2FutKX5frJad3uVpNM5mnbXhzS53AygPwijprD9qfabKYebggJpJKcWCN9NmQpUf7QM7wFcyg7AWMLhFTdHXy34fX7zvrMjbe9usMnPpAWS9KF779XTEAEQE22s
+    host: localhost
+    port: 3306
+    db_name: db_hospital
+    pool:
+      max: 100
+      min: 5
+  postgresql:
+    username: user_local
+    password: auUmc2FutKX5frJad3uVpNM5mnbXhzS53AygPwijprD9qfabKYebggJpJKcWCN9NmQpUf7QM7wFcyg7AWMLhFTdHXy34fX7zvrMjbe9usMnPpAWS9KF779XTEAEQE22s
+    host: localhost
+    port: 5432
+    db_name: db_hospital
+    pool:
+      max: 100
+      min: 5
+  sqlserver:
+    username: user_local
+    password: auUmc2FutKX5frJad3uVpNM5mnbXhzS53AygPwijprD9qfabKYebggJpJKcWCN9NmQpUf7QM7wFcyg7AWMLhFTdHXy34fX7zvrMjbe9usMnPpAWS9KF779XTEAEQE22s
+    host: localhost
+    port: 1433
+    db_name: db_hospital
+    pool:
+      max: 100
+      min: 5
+
+security:
+  jwt:
+    # 5 minutes in millis
+    expiration: 300000
+    # 7 days in millis
+    refresh_expiration: 604800000
+    key: cjL7YxzHLgNY7SVRcqvyZSRZE5iN7RQYJpKFqP57MnkuxuDQPb7FX3SDuzTEckAxsJk2wMFwLMwyFtMR3msyfgjwbkazEAw45XyJKYh
+  
+  auth:
+    salt: CHANGEME
+
+  session:
+    key: 4125442A472D4B614E645267556B58703273357638792F423F4528482B4D6251
+    name: auth
+    secure: false
+    # 1 day in seconds
+    timeout: 86400
+
+connection:
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: 8cffbaaa5bd144ab1939361a03103eed7d1af6fd9e2052b1ef73502745a3dfcc
+    # millis
+    timeout: 5000
+    ssl:
+      enabled: false
+      cert_path: src/main/resources/cert/server.pem
+    cache:
+      enabled: true
+  infinispan:
+    host: 127.0.0.1
+    port: 11222
+    password: password
+    username: admin
+    cache_name: vertx-web.sessions
+    retry_timeout: 5000
+
+monitoring:
+  logger:
+    # 1 ERROR, 2 WARN, 3 INFO, 4 DEBUG, 5 TRACE
+    level: 4
+
+rate_control:
+  limiter:
+    max_connection: 100
+    # in seconds
+    time_reset_connection: 60
