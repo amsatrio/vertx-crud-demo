@@ -12,7 +12,10 @@ public class HealthApi {
     }
     
     public void status(RoutingContext routingContext) {
-        Response<String> response = Response.success(200, routingContext.normalizedPath(), "ok");
+        Health health = new Health();
+        health.setStatus("up");
+
+        Response<Health> response = Response.success(200, routingContext.normalizedPath(), health);
 
         routingContext.response()
                 .putHeader("Content-Type", "application/json")
