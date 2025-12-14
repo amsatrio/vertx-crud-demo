@@ -44,7 +44,7 @@
     <appender name="ROLLING" class="RollingFileAppender">
         <file>${logDirectory}/${logServiceName}_current.log</file>
         <rollingPolicy class="SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${logDirectory}\${logServiceName}_%d{yyyyMMdd}.%i.log</fileNamePattern>
+            <fileNamePattern>${logDirectory}\${logServiceName}_%d{yyyyMMdd}.%i.log.gz</fileNamePattern>
             <maxFileSize>20MB</maxFileSize>
             <maxHistory>7</maxHistory>
             <totalSizeCap>1GB</totalSizeCap>
