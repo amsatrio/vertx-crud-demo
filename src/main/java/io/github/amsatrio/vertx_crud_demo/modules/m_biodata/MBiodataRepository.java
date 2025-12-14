@@ -29,7 +29,7 @@ public class MBiodataRepository {
 
     private final SqlClient sqlClient;
     private final PaginationRepository<MBiodata> paginationRepository;
-    private DatabaseType databaseType = DatabaseType.SQLSERVER;
+    private DatabaseType databaseType = DatabaseType.MARIADB;
     private String moduleName = "m-biodata";
 
     @Inject
