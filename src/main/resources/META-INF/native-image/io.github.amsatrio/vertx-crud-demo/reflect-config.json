@@ -17,7 +17,6 @@
     "name": "java.lang.Integer",
     "allDeclaredConstructors": true
   },
-
   {
     "name": "io.github.amsatrio.vertx_crud_demo.MainVerticle",
     "allDeclaredConstructors": true,

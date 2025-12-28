@@ -1,0 +1,15 @@
+services:
+  vertx-crud-demo:
+    container_name: vertx-crud-demo
+    image: vertx-crud-demo
+    build:
+      context: ..
+      dockerfile: ./container/Dockerfile.jvm
+    ports:
+      - "8811:8811"
+    networks:
+      - sql-database
+networks:
+  sql-database:
+    name: sql-database-network
+    external: true

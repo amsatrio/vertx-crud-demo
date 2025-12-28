@@ -320,7 +320,10 @@
             </executions>
             <configuration>
               <imageName>${project.artifactId}</imageName>
-               <mainClass>io.vertx.launcher.application.VertxApplication</mainClass>
+              <mainClass>${launcher.class}</mainClass>
+              <systemProperties>
+                <vertx.main-verticle>${main.verticle}</vertx.main-verticle>
+              </systemProperties>
               <buildArgs>-H:+PrintClassInitialization -H:+ReportExceptionStackTraces</buildArgs>
               <skipNativeTests>true</skipNativeTests>
               <debug>true</debug>

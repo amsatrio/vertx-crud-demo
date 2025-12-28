@@ -1,0 +1,14 @@
+FROM eclipse-temurin:21.0.9_10-jre-nanoserver
+
+WORKDIR /app
+RUN chown 1001 /app \
+    && chmod "g+rwX" /app \
+    && chown 1001:root /app
+
+COPY --chown=1001:root --chmod=0755 ../target/*-fat.jar /app/application.jar
+COPY --chown=1001:root --chmod=0755 ../src/main/resources/* /app/
+
+EXPOSE 8811
+USER 1001
+
+CMD ["java", "-jar", "./application.jar"]

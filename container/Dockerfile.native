@@ -1,0 +1,14 @@
+FROM debian:bullseye-slim
+
+WORKDIR /app
+RUN chown 1001 /app \
+    && chmod "g+rwX" /app \
+    && chown 1001:root /app
+
+COPY --chown=1001:root --chmod=0755 ../target/*-bin /app/application
+COPY --chown=1001:root --chmod=0755 ../src/main/resources/* /app/
+
+EXPOSE 8811
+USER 1001
+
+CMD ["./application"]
