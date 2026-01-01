@@ -1,6 +1,7 @@
 package io.github.amsatrio.vertx_crud_demo.modules.m_biodata;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -9,6 +10,7 @@ import io.github.amsatrio.vertx_crud_demo.dto.request.FilterRequest;
 import io.github.amsatrio.vertx_crud_demo.dto.request.SortRequest;
 import io.github.amsatrio.vertx_crud_demo.handler.exception.ApiExceptionHandler;
 import io.github.amsatrio.vertx_crud_demo.handler.response.ApiResponseHandler;
+import io.github.amsatrio.vertx_crud_demo.util.AppGenerator;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RequestBody;
 import io.vertx.ext.web.Router;
@@ -32,6 +34,8 @@ public class MBiodataApi {
     }
 
     public void init(Router router) {
+        router.get("/v1/m-biodata/generate/:size")
+                .handler(this::generate);
         router.get("/v1/m-biodata").handler(this::getPage);
         router.get("/v1/m-biodata/:key/:value")
                 .handler(this::findBy);
@@ -119,7 +123,7 @@ public class MBiodataApi {
     }
 
     public void update(RoutingContext routingContext) {
-        log.debug("create");
+        log.debug("update");
 
         Long accessUserId = routingContext.get("jwt_user_id");
         if (accessUserId == null) {
@@ -163,6 +167,54 @@ public class MBiodataApi {
                 }).onSuccess(data -> {
                     apiResponseHandler.success(routingContext);
                 });
+    }
+
+    public void generate(RoutingContext routingContext) {
+        log.debug("generate");
+
+        Long accessUserId = routingContext.get("jwt_user_id");
+        if (accessUserId == null) {
+            accessUserId = 0L;
+        }
+
+        Long size = Long.parseLong(routingContext.pathParam("size"));
+
+        List<JsonObject> list = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+
+            JsonObject jsonObject = new JsonObject();
+
+            // SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd
+            // HH:mm:ss");
+            Date date = new Date();
+
+            // set log data
+            if (!jsonObject.containsKey("id")) {
+                jsonObject.put("id", (date.getTime() / 2) + i);
+            }
+            jsonObject.put("createdBy", accessUserId);
+            jsonObject.put("createdOn", LocalDateTime.now());
+            jsonObject.put("isDelete", false);
+            jsonObject.put("fullname", AppGenerator.randomName());
+            jsonObject.put("mobilePhone", AppGenerator.generateMobileNumber("08", 10));
+            String folder = AppGenerator.generateGibberish(6); 
+            String fileName = AppGenerator.generateGibberish(7) + "." + AppGenerator.generateGibberish(3);;
+            jsonObject.put("imagePath", "/home/user0/image/" + folder + "/" + fileName);
+            jsonObject.remove("deletedBy");
+            jsonObject.remove("deletedOn");
+            jsonObject.remove("modifiedOn");
+            jsonObject.remove("modifiedBy");
+
+            list.add(jsonObject);
+        }
+
+        mBiodataService.saveAll(list)
+                .onFailure(exception -> {
+                    apiExceptionHandler.error(routingContext, exception);
+                }).onSuccess(data -> {
+                    apiResponseHandler.success(routingContext);
+                });
+
     }
 
     public void getPage(RoutingContext routingContext) {
