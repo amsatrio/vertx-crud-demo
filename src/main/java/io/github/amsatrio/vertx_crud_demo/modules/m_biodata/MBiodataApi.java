@@ -36,7 +36,7 @@ public class MBiodataApi {
     public void init(Router router) {
         router.get("/v1/m-biodata/generate/:size")
                 .handler(this::generate);
-        router.post("/v1/m-biodata-init-table").handler(this::initTable);
+        router.get("/v1/m-biodata/init-table").handler(this::initTable);
         router.get("/v1/m-biodata").handler(this::getPage);
         router.get("/v1/m-biodata/:key/:value")
                 .handler(this::findBy);

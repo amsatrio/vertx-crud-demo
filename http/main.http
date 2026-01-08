@@ -23,7 +23,7 @@ curl -X GET --location {{health_base_url}}/status
 
 # === m-biodata
 ### init-table
-curl -X POST --location {{mbiodata_base_url}}-init-table
+curl -X GET --location {{mbiodata_base_url}}/init-table
 ### generate
 curl -X GET --location {{mbiodata_base_url}}/generate/1000
 ### page
