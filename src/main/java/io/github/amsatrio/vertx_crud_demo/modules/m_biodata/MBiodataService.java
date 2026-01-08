@@ -53,4 +53,8 @@ public class MBiodataService {
             String globalFilter) {
         return repository.getPage(page, size, filterRequests, sortRequests, globalFilter);
     }
+
+    public Future<Void> saveAll(List<JsonObject> list) {
+        return repository.saveAll(list);
+    }
 }

@@ -129,10 +129,8 @@ public class MBiodataRepository {
                     if (map.containsKey("image")) {
                         if (map.get("image") != null) {
                             String base64 = map.get("image").toString();
-                            base64 = base64.replaceFirst("data:image/jpeg;base64,", "");
-                            base64 = base64.replaceFirst("data:image/jpg;base64,", "");
-                            base64 = base64.replaceFirst("data:image/png;base64,", "");
-                            byte[] imageData = Base64.getDecoder().decode(base64);
+                            String cleanBase64 = base64.replaceFirst("data:image/(jpeg|jpg|png);base64,", "");
+                            byte[] imageData = Base64.getDecoder().decode(cleanBase64);
                             map.replace("image", Buffer.buffer(imageData));
                         }
                     }
@@ -158,6 +156,7 @@ public class MBiodataRepository {
     // === UPDATE
     public Future<Void> update(JsonObject jsonObject) {
         log.debug("update");
+        log.debug(jsonObject.encodePrettily());
 
         Promise<Void> promise = Promise.promise();
 
@@ -174,10 +173,8 @@ public class MBiodataRepository {
                     if (map.containsKey("image")) {
                         if (map.get("image") != null) {
                             String base64 = map.get("image").toString();
-                            base64 = base64.replaceFirst("data:image/jpeg;base64,", "");
-                            base64 = base64.replaceFirst("data:image/jpg;base64,", "");
-                            base64 = base64.replaceFirst("data:image/png;base64,", "");
-                            byte[] imageData = Base64.getDecoder().decode(base64);
+                            String cleanBase64 = base64.replaceFirst("data:image/(jpeg|jpg|png);base64,", "");
+                            byte[] imageData = Base64.getDecoder().decode(cleanBase64);
                             map.replace("image", Buffer.buffer(imageData));
                         }
                     }
@@ -247,6 +244,29 @@ public class MBiodataRepository {
                 });
 
         return promise.future();
+    }
+
+    public Future<Void> saveAll(List<JsonObject> jsonObjects) {
+        log.debug("createAll - size: " + jsonObjects.size());
+
+        List<Map<String, Object>> batchData = jsonObjects.stream().map(json -> {
+            Map<String, Object> map = json.getMap();
+            if (map.get("image") instanceof String base64) {
+                String cleanBase64 = base64.replaceFirst("data:image/(jpeg|jpg|png);base64,", "");
+                map.put("image", Buffer.buffer(Base64.getDecoder().decode(cleanBase64)));
+            }
+            return map;
+        }).toList();
+
+        return AppFileIO
+                .readFile("sql/" + databaseType.toString().toLowerCase() + "/" + moduleName + "/insert.sql")
+                .compose(sql -> {
+                    System.out.println(sql);
+                    return SqlTemplate
+                            .forUpdate(sqlClient, sql)
+                            .executeBatch(batchData)
+                            .mapEmpty();
+                });
     }
 
 }
