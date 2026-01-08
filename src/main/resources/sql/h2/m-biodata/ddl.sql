@@ -10,6 +10,6 @@ CREATE TABLE IF NOT EXISTS `m_biodata` (
   `created_on` datetime NOT NULL,
   `modified_on` datetime DEFAULT NULL,
   `deleted_on` datetime DEFAULT NULL,
-  `is_delete` tinyint DEFAULT NULL,
+  `is_delete` boolean DEFAULT NULL,
   PRIMARY KEY (`id`,`created_on`)
 )
