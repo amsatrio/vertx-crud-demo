@@ -1,2 +1,14 @@
 server:
-    port: 8810
+  port: 8810
+  host: 0.0.0.0
+
+database:
+  mariadb:
+    username: user_local
+    password: auUmc2FutKX5frJad3uVpNM5mnbXhzS53AygPwijprD9qfabKYebggJpJKcWCN9NmQpUf7QM7wFcyg7AWMLhFTdHXy34fX7zvrMjbe9usMnPpAWS9KF779XTEAEQE22s
+    host: mariadb
+    port: 3306
+    db-name: db_hospital
+    pool:
+      max: 100
+      min: 5

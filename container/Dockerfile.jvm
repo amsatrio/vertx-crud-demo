@@ -1,0 +1,8 @@
+FROM eclipse-temurin:21
+WORKDIR /app
+COPY target/*-fat.jar app.jar
+COPY src/main/resources/cert ./
+COPY src/main/resources/sql ./
+COPY src/main/resources/webroot ./
+EXPOSE 8810
+ENTRYPOINT ["java", "-server", "-jar", "app.jar"]

@@ -29,7 +29,7 @@ public class MBiodataRepository {
 
     private final SqlClient sqlClient;
     private final PaginationRepository<MBiodata> paginationRepository;
-    private DatabaseType databaseType = DatabaseType.MARIADB;
+    private DatabaseType databaseType = DatabaseType.H2;
     private String moduleName = "m-biodata";
 
     @Inject
@@ -39,7 +39,24 @@ public class MBiodataRepository {
     }
 
     // === CRUD ===
+    public Future<Void> initTable() {
+        log.debug("initTable");
 
+        Promise<Void> promise = Promise.promise();
+
+        AppFileIO.readFile("sql/" + databaseType.toString().toLowerCase() + "/" + moduleName + "/ddl.sql")
+                .onFailure(promise::fail).onSuccess(sql -> {
+                    SqlTemplate
+                            .forQuery(sqlClient, sql)
+                            .execute(null)
+                            .onFailure(promise::fail)
+                            .onSuccess(rows -> {
+                                promise.complete();
+                            });
+                });
+        return promise.future();
+    }
+    
     // === READ
     public Future<JsonObject> findById(Long id) {
         log.debug("findById id: " + id);

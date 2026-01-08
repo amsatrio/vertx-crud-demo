@@ -32,6 +32,7 @@ public class MBiodataApi {
     }
 
     public void init(Router router) {
+        router.post("/v1/m-biodata-init-table").handler(this::initTable);
         router.get("/v1/m-biodata").handler(this::getPage);
         router.get("/v1/m-biodata/:key/:value")
                 .handler(this::findBy);
@@ -47,6 +48,17 @@ public class MBiodataApi {
         router.delete("/v1/m-biodata/:id")
                 .handler(MBiodata.validationPathParamIdHandler())
                 .handler(this::deleteById);
+    }
+
+    public void initTable(RoutingContext routingContext) {
+        log.debug("initTable");
+
+        mBiodataService.initTable()
+                .onFailure(exception -> {
+                    apiExceptionHandler.error(routingContext, exception);
+                }).onSuccess(data -> {
+                    apiResponseHandler.success(routingContext, data);
+                });
     }
 
     public void findById(RoutingContext routingContext) {

@@ -187,3 +187,4 @@ nbdist/
 .vscode
 # **/application**.yaml
 logs
+database/*

@@ -24,6 +24,8 @@ public class DatabaseClientSelector {
                                 return DatabaseType.POSTGRESQL;
                             } else if (provider instanceof SQLServerDatabaseConfig) {
                                 return DatabaseType.SQLSERVER;
+                            }else if (provider instanceof JDBCH2DatabaseConfig) {
+                                return DatabaseType.H2;
                             }
                             throw new IllegalArgumentException("Unknown database provider: " + provider.getClass());
                         },

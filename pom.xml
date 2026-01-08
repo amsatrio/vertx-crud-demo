@@ -92,6 +92,16 @@
       <groupId>io.vertx</groupId>
       <artifactId>vertx-mssql-client</artifactId>
     </dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-jdbc-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>2.4.240</version>
+      <!-- <scope>test</scope> -->
+  </dependency>
 
     <!-- DATABASE DEPS -->
     <dependency>
@@ -320,7 +330,7 @@
             </executions>
             <configuration>
               <imageName>${project.artifactId}</imageName>
-               <mainClass>io.vertx.launcher.application.VertxApplication</mainClass>
+              <mainClass>io.vertx.launcher.application.VertxApplication</mainClass>
               <buildArgs>-H:+PrintClassInitialization -H:+ReportExceptionStackTraces</buildArgs>
               <skipNativeTests>true</skipNativeTests>
               <debug>true</debug>

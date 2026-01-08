@@ -1,4 +1,4 @@
-@base_url=http://localhost:8811
+@base_url=http://localhost:8810
 @hello_world_base_url={{base_url}}/v1/hello-world
 @health_base_url={{base_url}}/v1/health
 @mbiodata_base_url={{base_url}}/v1/m-biodata
@@ -22,6 +22,8 @@ curl -X GET --location {{health_base_url}}/status
 
 
 # === m-biodata
+### init-table
+curl -X POST --location {{mbiodata_base_url}}-init-table
 ### page
 curl -X GET --location {{mbiodata_base_url}}?page=500&size=2
 ### get

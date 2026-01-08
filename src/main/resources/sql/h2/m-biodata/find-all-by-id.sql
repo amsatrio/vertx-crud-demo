@@ -1,0 +1,1 @@
+select * from m_biodata where id=#{id} limit 1

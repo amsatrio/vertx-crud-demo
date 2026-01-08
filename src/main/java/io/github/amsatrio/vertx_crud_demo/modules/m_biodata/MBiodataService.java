@@ -21,6 +21,10 @@ public class MBiodataService {
         this.repository = Objects.requireNonNull(repository, "repository cannot be null");
     }
 
+    public Future<Void> initTable() {
+        return repository.initTable();
+    }
+
     public Future<JsonObject> findById(Long id) {
         return repository.findById(id);
     }

@@ -1,6 +1,6 @@
 application:
   name: vertx-hospital
-  environment: local
+  environment: prod
 
 server:
   host: 127.0.0.1
@@ -39,6 +39,13 @@ database:
     host: localhost
     port: 1433
     db-name: db_hospital
+    pool:
+      max: 100
+      min: 5
+  h2:
+    username: user_local
+    password: auUmc2FutKX5frJad3uVpNM5mnbXhzS53AygPwijprD9qfabKYebggJpJKcWCN9NmQpUf7QM7wFcyg7AWMLhFTdHXy34fX7zvrMjbe9usMnPpAWS9KF779XTEAEQE22s
+    url: jdbc:h2:/home/user0/workspace/java/vertx-crud-demo/database/h2_db_hospital;MODE=MySQL;DATABASE_TO_LOWER=TRUE
     pool:
       max: 100
       min: 5

@@ -78,7 +78,7 @@ public class MainVerticle extends VerticleBase {
         .requestHandler(router())
         .listen(serverJsonObject.getInteger("port"), serverJsonObject.getString("host"))
         .onSuccess(server -> {
-          log.info("HTTP server started on port " + serverJsonObject.getInteger("port"));
+          log.info("HTTP server started on " + serverJsonObject.getString("host") + ":" + serverJsonObject.getInteger("port"));
         });
   }
 

@@ -10,9 +10,14 @@ native_dir:
 dev:
 	JAVA_HOME=/opt/openjdk-bin-21 ./mvnw exec:java -X
 start:
-	JAVA_HOME=/opt/openjdk-bin-21 java -jar target/vertx-crud-demo-1.0.0-SNAPSHOT-fat.jar 
+	JAVA_HOME=/opt/openjdk-bin-21 java -server -jar target/vertx-crud-demo-1.0.0-SNAPSHOT-fat.jar 
 start_native:
 	cd ./target/bin && ./vertx-crud-demo
 
 clean:
-	JAVA_HOME=/opt/openjdk-bin-21 ./mvnw clean install
+	JAVA_HOME=/opt/openjdk-bin-21 ./mvnw clean
+
+docker_up: docker_down 
+	docker compose -f container/compose.yaml build --no-cache && docker compose -f container/compose.yaml up -d
+docker_down:
+	docker compose -f container/compose.yaml down
