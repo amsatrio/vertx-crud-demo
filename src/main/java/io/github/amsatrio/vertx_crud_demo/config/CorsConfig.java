@@ -40,10 +40,14 @@ public class CorsConfig {
         allowedOriginPatterns.add("http://localhost:3003");
         allowedOriginPatterns.add("http://localhost:3004");
         allowedOriginPatterns.add("http://localhost:3005");
+        allowedOriginPatterns.add("http://localhost:5173");
+        allowedOriginPatterns.add("http://localhost:5174");
+        allowedOriginPatterns.add("http://localhost:5175");
 
         return CorsHandler.create()
                 .addOrigins(allowedOriginPatterns)
-                .allowedMethods(allowedMethods)
+                .allowedMethods(allowedMethods).addOriginWithRegex("^http://localhost:\\d+$")
+                .allowCredentials(true)
                 .allowedHeaders(allowedHeaders);
     }
 }
