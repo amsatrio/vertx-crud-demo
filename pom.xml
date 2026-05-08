@@ -22,7 +22,7 @@
     <junit-jupiter.version>5.9.1</junit-jupiter.version>
 
     <jackson.version>2.18.2</jackson.version>
-    <micronaut.version>4.8.9</micronaut.version>
+    <micronaut.version>4.10.22</micronaut.version>
     <logback.contrib.version>0.1.5</logback.contrib.version>
 
     <main.verticle>io.github.amsatrio.vertx_crud_demo.MainVerticle</main.verticle>
